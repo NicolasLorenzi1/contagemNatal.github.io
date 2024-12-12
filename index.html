@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Contagem Regressiva</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-image: url('fotoFundo.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            overflow: hidden;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        h1,
+        h2,
+        h3 {
+            text-align: center;
+            font-weight: 400;
+            color: red;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            font-size: 3em;
+        }
+
+        h2 {
+            font-size: 2em;
+        }
+
+        h3 {
+            font-size: 2em;
+        }
+
+        @keyframes snow {
+            0% {
+                top: -10%;
+                left: 0;
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                left: calc(100% * var(--left));
+                opacity: 0;
+            }
+        }
+
+        .snowflake {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            width: 8px;
+            height: 8px;
+            animation: snow var(--duration) linear infinite;
+            animation-delay: var(--delay);
+        }
+
+        .snowflake:nth-child(odd) {
+            animation-duration: calc(var(--duration) + 2s);
+        }
+
+        .snowflake:nth-child(even) {
+            animation-duration: calc(var(--duration) + 3s);
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio autoplay loop hidden>
+        <source src="musica.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="snowflake" style="--left: 0.1; --duration: 5s; --delay: 0s;"></div>
+    <div class="snowflake" style="--left: 0.3; --duration: 6s; --delay: 1s;"></div>
+    <div class="snowflake" style="--left: 0.6; --duration: 4s; --delay: 2s;"></div>
+    <div class="snowflake" style="--left: 0.8; --duration: 5s; --delay: 3s;"></div>
+    <div class="snowflake" style="--left: 0.4; --duration: 6s; --delay: 1.5s;"></div>
+
+    <h2 id="mensagem2"></h2>
+    <h1 id="mensagem"></h1>
+    <h3 id="mensagem3"></h3>
+
+    <script>
+        document.querySelector('audio').muted = false;
+
+        window.addEventListener('click', function () {
+            const audio = document.querySelector('audio');
+            audio.play().catch(error => console.log('Reprodução bloqueada:', error));
+        });
+
+        function segundosNatal() {
+            const agora = new Date();
+            const natal = new Date(agora.getFullYear(), 11, 25);
+
+            if (agora > natal) {
+                natal.setFullYear(natal.getFullYear() + 1);
+            }
+
+            const diferencaMillis = natal - agora;
+            return Math.floor(diferencaMillis / 1000);
+        }
+
+        let segundosRestantes = segundosNatal();
+
+        function formatarTempo(segundos) {
+            const dias = Math.floor(segundos / (24 * 3600));
+            const horas = Math.floor((segundos % (24 * 3600)) / 3600);
+            const minutos = Math.floor((segundos % 3600) / 60);
+            const segundosFinais = segundos % 60;
+            return `${dias}d ${horas}h ${minutos}m ${segundosFinais}s`;
+        }
+
+        function atualizarMensagem() {
+            if (segundosRestantes >= 0) {
+                document.getElementById('mensagem2').textContent = "Faltam apenas:";
+                document.getElementById('mensagem').textContent = formatarTempo(segundosRestantes);
+                document.getElementById('mensagem3').textContent = "para o Natal!";
+                segundosRestantes--;
+            } else {
+                document.getElementById('mensagem').textContent = "Feliz Natal!";
+                document.getElementById('mensagem2').textContent = "";
+                document.getElementById('mensagem3').textContent = "";
+            }
+        }
+
+        atualizarMensagem();
+        setInterval(atualizarMensagem, 1000);
+    </script>
+</body>
+
+</html>
